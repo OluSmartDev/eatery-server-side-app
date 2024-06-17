@@ -1,6 +1,7 @@
 const express = require("express");
 const StatusCodes = require("../utils/statusCodes");
 const { VERSION } = require("../config/envConfig");
+const usersRouter = require("../routes/usersRouter");
 
 module.exports = (app) => {
     // set cors
@@ -19,6 +20,8 @@ module.exports = (app) => {
     // middlewares to ensure express app handle both HTML forms and JSON data
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json({limit: "100mb"}));
+
+    app.use(`${VERSION}/users`,  usersRouter)
 
     app.get(`${VERSION}/`, (req, res, next) => {
         res.json({
