@@ -14,14 +14,18 @@ const signUp = async (req, res, next) => {
         });
     }
 
-    const salt = await bcrypt.genSaltSync(10);
+    const salt = bcrypt.genSaltSync(10);
     // console.log(salt);
     
     const hashedPassword = await bcrypt.hash(password, salt);
     // console.log(hashedPassword);
 
     const saveUser = await userModel.create({
-        first_name, last_name, username, email, hashedPassword
+        first_name: first_name,
+        last_name: last_name,
+        username: username,
+        email: email,
+        password: hashedPassword
     });
 
     // TO DO:
@@ -29,7 +33,7 @@ const signUp = async (req, res, next) => {
 
     return res.status(StatusCodes.CREATED).json({
         status: true,
-        msg: "user account created succesfully",
+        msg: "user account created successfully",
         data: saveUser
     })
 }
