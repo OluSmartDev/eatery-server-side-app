@@ -3,14 +3,16 @@ const StatusCodes = require("../utils/statusCodes");
 const bcrypt = require("bcrypt");
 
 const signUp = async (req, res, next) => {
+
     const {first_name, last_name, username, email, password} = req.body;
 
     const userExist = await userModel.findOne({email: email});
 
     if (userExist) {
+        console.log("user's email already exists");
         return res.status(StatusCodes.BAD_REQUEST).json({
             status: false,
-            msg: "user already exists"
+            msg: "user's email already exists"
         });
     }
 
