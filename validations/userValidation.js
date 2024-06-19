@@ -29,6 +29,27 @@ exports.signUpValidator = (req, res, next) => {
         });
     }
     next();
+}
+
+exports.signInValidator = (req, res, next) => {
+
+    const schema = Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string().required()
+    });
+
+    const result = schema.validate(req.body, validateOptions);
+
+    if (result.error) {
+        // console.log("signInValidator Error: ", result.error);
+
+        // return res.send(error.details);
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
 } 
 
 exports.otpValidator = (req, res, next) => {
@@ -50,4 +71,3 @@ exports.otpValidator = (req, res, next) => {
     }
     next();
 } 
-

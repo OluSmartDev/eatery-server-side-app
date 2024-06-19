@@ -1,7 +1,7 @@
 const OtpModel = require("../models/OtpModel");
 const userModel = require("../models/UserModel");
 const { signUpOtpEmail, userSignUpEmail } = require("../utils/emails/authEmails");
-const { generateOTP } = require("../utils/generateTokens");
+const { generateOTP, generateJWT } = require("../utils/generateTokens");
 const StatusCodes = require("../utils/statusCodes");
 const bcrypt = require("bcrypt");
 
@@ -169,6 +169,56 @@ exports.signUp = async (req, res, next) => {
         });
     } catch (error) {
         console.log("Saver User: ", error);
+
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+}
+
+exports.signIn = async (req, res, next) => {
+
+    try {
+        const {email, password} = req.body;
+
+        console.log(email, password);
+
+        const userExist = await userModel.findOne({email: email});
+
+        if (!userExist) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status: false,
+                msg: "User account not found, please signup"
+            });
+        }
+
+        const passwordMatches = await bcrypt.compare(password, userExist.password);
+        console.log("Password Matches: ", passwordMatches);
+
+        if (!passwordMatches) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status: false,
+                msg: "Incorrect Password!"
+            });
+        }
+
+        // Generate JWT:
+        const token = await generateJWT(userExist);
+
+        console.log("JWT:", token)
+
+        return res.status(StatusCodes.CREATED).json({
+            status: true,
+            msg: "Welcome to EateryApp",
+            data: {
+                userExist,
+                token
+            }
+        });
+
+    } catch (error) {
+        console.log("Login Error: ", error);
 
         return res.status(StatusCodes.BAD_REQUEST).json({
             status: false,

@@ -6,6 +6,7 @@ const VERSION = process.env.VERSION;
 const SERVICE = process.env.SERVICE;
 const PASSMAILER = process.env.PASSMAILER;
 const MAIL_FROM = process.env.MAIL_FROM;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 
 module.exports = {
@@ -14,5 +15,6 @@ module.exports = {
     VERSION,
     SERVICE,
     PASSMAILER,
-    MAIL_FROM
+    MAIL_FROM,
+    JWT_SECRET
 }
