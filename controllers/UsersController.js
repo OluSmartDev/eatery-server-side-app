@@ -28,8 +28,7 @@ exports.getOTP = async (req, res, next) => {
             status: true,
             msg: "Check email for the otp sent to you",
             data: saveOTP
-        });
-        next();
+        });        
     } catch (error) {
         console.log("saveOTP: ", error);
 
@@ -38,6 +37,59 @@ exports.getOTP = async (req, res, next) => {
             msg: "Invalid Request"
         });
     }
+    next();
+}
+
+exports.validateOTP = async (req, res, next) => {
+    try {
+        const {email, otp} = req.body;
+
+        const otpObject = await OtpModel.findOne({otp: otp});
+        console.log("OTP Object: ", otpObject);
+
+        if (otpObject == null) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status: true,
+                msg: "Invalid OTP"
+            });
+        }
+
+        if (otpObject.email != email) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status: true,
+                msg: "Invalid Email"
+            });
+        }
+
+        if (otpObject.otpExpiresAt < Date.now()) {
+            // Delete expired OTP:
+            await OtpModel.deleteOne({otp: otp});
+            
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status: true,
+                msg: "OTP has expired. Request another OTP."
+            });
+        }
+
+        // Delete validated OTP:
+        await OtpModel.deleteOne({otp: otp});
+
+        console.log("OTP validated successfully");
+
+        return res.status(StatusCodes.OK).json({
+            status: true,
+            msg: "OTP validated successfully"
+        });
+
+    } catch (error) {
+        console.log("validateOTP Error: ", error);
+
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
 }
 
 exports.signUp = async (req, res, next) => {

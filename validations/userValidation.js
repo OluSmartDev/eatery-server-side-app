@@ -6,7 +6,8 @@ const validateOptions = {
     allowUnknown: true,
     stripUnknown: true
 };
-const signUpValidator = (req, res, next) => {
+
+exports.signUpValidator = (req, res, next) => {
 
     const schema = Joi.object({
         first_name: Joi.string().min(3).max(20).required(),
@@ -30,4 +31,23 @@ const signUpValidator = (req, res, next) => {
     next();
 } 
 
-module.exports = {signUpValidator}
+exports.otpValidator = (req, res, next) => {
+
+    const schema = Joi.object({
+        email: Joi.string().email().required(),
+    });
+
+    const result = schema.validate(req.body, validateOptions);
+
+    if (result.error) {
+        console.log(result.error);
+
+        // return res.send(error.details);
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
+} 
+
