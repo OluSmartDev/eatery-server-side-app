@@ -40,6 +40,45 @@ exports.getOTP = async (req, res, next) => {
     next();
 }
 
+exports.resendOTP = async (req, res, next) => {
+    try {
+        const {email} = req.body;
+
+        const otpExist = await OtpModel.findOne({email: email});
+        
+        await OtpModel.deleteMany({email: otpExist?.email});
+
+        const otp = await generateOTP();
+        // console.log("Email: ", email);
+        // console.log("OTP: ", otp);
+
+        const saveOTP = await OtpModel.create({
+            email: email,
+            otp: otp,
+            type: "Signup",
+            created_at: new Date(),
+            otpExpiresAt: Date.now() + 5 * 60 * 1000 // 5 minutes
+        });
+
+        // TO DO: send signUpOtpEmail containing OTP to user:
+        await signUpOtpEmail(email, otp);
+
+        return res.status(StatusCodes.CREATED).json({
+            status: true,
+            msg: "Check email for the otp sent to you",
+            data: saveOTP
+        });        
+    } catch (error) {
+        console.log("saveOTP: ", error);
+
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
+}
+
 exports.validateOTP = async (req, res, next) => {
     try {
         const {email, otp} = req.body;
