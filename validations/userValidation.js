@@ -70,4 +70,86 @@ exports.otpValidator = (req, res, next) => {
         });
     }
     next();
-} 
+}
+
+exports.addMenuValidator = (req, res, next) => {
+
+    const schema = Joi.object({
+        dish_name: Joi.string().min(3).max(30).unique().required(),
+        description: Joi.string().max(100).required(),
+        price: Joi.number().required()
+    });
+
+    const result = schema.validate(req.body, validateOptions);
+
+    if (result.error) {
+        console.log(result.error);
+
+        // return res.send(error.details);
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
+}
+
+exports.updateMenuValidator = (req, res, next) => {
+
+    const schema = Joi.object({
+        dish_name: Joi.string().min(3).max(30),
+        description: Joi.string().max(100),
+        price: Joi.number()
+    });
+
+    const result = schema.validate(req.body, validateOptions);
+
+    if (result.error) {
+        console.log(result.error);
+
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
+}
+
+exports.getMenuItemValidator = (req, res, next) => {
+
+    const schema = Joi.object({
+        dish_name: Joi.string().min(3).max(30),
+        _id: Joi.string()
+    });
+
+    const result = schema.validate(req.body, validateOptions);
+
+    if (result.error) {
+        console.log(result.error);
+
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
+}
+
+exports.deleteMenuItemValidator = (req, res, next) => {
+
+    const schema = Joi.object({
+        dish_name: Joi.string().min(3).max(30)
+    });
+
+    const result = schema.validate(req.body, validateOptions);
+
+    if (result.error) {
+        console.log(result.error);
+
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
+}

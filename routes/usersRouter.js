@@ -8,6 +8,6 @@ router.post("/otp/resend", otpValidator, usersController.resendOTP);
 router.put("/otp/validate/", otpValidator, usersController.validateOTP);
 
 router.post("/signup", signUpValidator, usersController.signUp);
-router.post("/signIn", signInValidator, usersController.signIn);
+router.post("/signin", signInValidator, usersController.signIn);
 
 module.exports = router;
