@@ -2,6 +2,7 @@ const express = require("express");
 const StatusCodes = require("../utils/statusCodes");
 const { VERSION } = require("../config/envConfig");
 const usersRouter = require("../routes/usersRouter");
+const menusRouter = require("../routes/menusRouter");
 
 module.exports = (app) => {
     // set cors
@@ -22,6 +23,7 @@ module.exports = (app) => {
     app.use(express.json({limit: "100mb"}));
 
     app.use(`${VERSION}/users`,  usersRouter)
+    app.use(`${VERSION}/menus`,  menusRouter)
 
     app.get(`${VERSION}/`, (req, res, next) => {
         res.json({
