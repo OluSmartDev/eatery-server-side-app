@@ -153,3 +153,26 @@ exports.deleteMenuItemValidator = (req, res, next) => {
     }
     next();
 }
+
+exports.createOrderValidator = (req, res, next) => {
+
+    const schema = Joi.object({
+        email: Joi.string().email().required(),
+        dish_name: Joi.string().min(3).max(30).required(),
+        dish_id: Joi.string(),        
+        quantity: Joi.number().required(),
+    });
+
+    const result = schema.validate(req.body, validateOptions);
+
+    if (result.error) {
+        console.log(result.error);
+
+        // return res.send(error.details);
+        return res.status(StatusCodes.BAD_REQUEST).json({
+            status: false,
+            msg: "Invalid Request"
+        });
+    }
+    next();
+}
