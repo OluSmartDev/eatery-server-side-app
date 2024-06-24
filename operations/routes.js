@@ -27,7 +27,8 @@ module.exports = (app) => {
     app.use(`${VERSION}/menus`,  menusRouter);
     app.use(`${VERSION}/orders`, ordersRouter);
 
-    app.get(`${VERSION}/`, (req, res, next) => {
+    // app.get(`${VERSION}/`, (req, res, next) => {
+    app.get('/', (req, res, next) => {
         res.json({
             status: true,
             message: "EATERY-APP-V1 health check passed"
