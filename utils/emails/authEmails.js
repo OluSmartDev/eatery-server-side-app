@@ -10,26 +10,26 @@ const transporter = nodemailer.createTransport({
     }
  });
 
-exports.signUpOtpEmail = async (email, otp) => {
+exports.signUpOtpEmail = async (email, first_name, otp) => {
     try {
         await transporter.sendMail({
             from: MAIL_FROM,
             to: email,
-            subject: "EateryApp: SignUp OTP",
+            subject: "EateryApp Verification Code",
             html: `
-                <b> Hi,</b></br>
+                <b> Hi ${first_name},</b></br>
                 <p>
                     Thank you for signing up with EateryApp. 
                 </p>
                 <p>
-                    Please use this OTP: ${otp} to validate your email and complete your signup.
+                    Please use this OTP: ${otp} to verify your email and complete your signup.
                     </br> 
                     Kindly note that the OTP will expire after 5 minutes of being issued.
                 </p>
                 </br>
                 <b>
                 <p>Best Regards,</p>
-                <p>EATERYAPP Team</p>
+                <p>EateryApp Team</p>
                 </b>
             `
         });
@@ -44,16 +44,16 @@ exports.userSignUpEmail = async (email, first_name) => {
         await transporter.sendMail({
             from: MAIL_FROM,
             to: email,
-            subject: "Wlecome to EateryApp",
+            subject: "Welcome to EateryApp",
             html: `
                 <b> Hi ${first_name}, </b></br>
                 <p>
-                    You are welcome to EateryApp. Your email has been validated.
+                    Your email has been successfully validated. You are welcome to EateryApp.
                 </p>
                 </br>
                 <b>
                 <p>Best Regards,</p>
-                <p>EATERYAPP Team</p>
+                <p>EateryApp Team</p>
                 </b>
             `
         });
