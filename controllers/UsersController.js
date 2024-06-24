@@ -61,7 +61,7 @@ exports.resendOTP = async (req, res, next) => {
         });
 
         // TO DO: send signUpOtpEmail containing OTP to user:
-        await signUpOtpEmail(email, otp);
+        await signUpOtpEmail(email, first_name = " ", otp);
 
         return res.status(StatusCodes.CREATED).json({
             status: true,
@@ -110,6 +110,8 @@ exports.validateOTP = async (req, res, next) => {
             });
         }
 
+        await userSignUpEmail(email, first_name = " ");
+
         // Delete validated OTP:
         await OtpModel.deleteOne({otp: otp});
 
@@ -145,6 +147,7 @@ exports.signUp = async (req, res, next) => {
                 msg: "user's email already exists"
             });
         }
+
         const salt = bcrypt.genSaltSync(10);
         // console.log("Salt: ", salt);
         
@@ -159,8 +162,26 @@ exports.signUp = async (req, res, next) => {
             password: hashedPassword
         });
 
-        // TO DO: send userSignUpEmail to user:
-        await userSignUpEmail(email, first_name);
+        const generatedOTP = await generateOTP();
+
+        const saveOTP = await OtpModel.create({
+            email,
+            otp: generatedOTP,
+            type: "Signup",
+            createdAt: new Date(),
+            otpExpiresAt: Date.now() + 5 * 60 * 1000, // 5 minutes
+        });
+
+        if (!saveOTP) {
+            console.log("saveOTP failed");
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                status: false,
+                msg: "saveOTP failed"
+            });
+        }
+
+        // const sendOTPEmail = await signUpOtpEmail(email, first_name, saveOTP.otp);
+        await signUpOtpEmail(email, first_name, saveOTP.otp);
 
         return res.status(StatusCodes.CREATED).json({
             status: true,
