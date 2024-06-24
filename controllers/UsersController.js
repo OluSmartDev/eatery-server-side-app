@@ -86,6 +86,11 @@ exports.validateOTP = async (req, res, next) => {
         const otpObject = await OtpModel.findOne({otp: otp});
         console.log("OTP Object: ", otpObject);
 
+        const userObject = await userModel.findOne({email: email});
+        console.log("User Object: ", userObject);
+
+        const first_name = userObject.first_name;
+
         if (otpObject == null) {
             return res.status(StatusCodes.BAD_REQUEST).json({
                 status: true,
@@ -110,7 +115,8 @@ exports.validateOTP = async (req, res, next) => {
             });
         }
 
-        await userSignUpEmail(email, first_name = " ");
+        await userSignUpEmail(email, first_name);
+        console.log("userSignUpEmail sent successfully");
 
         // Delete validated OTP:
         await OtpModel.deleteOne({otp: otp});
